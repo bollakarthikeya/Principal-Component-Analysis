@@ -37,22 +37,24 @@ iris_df$petal_width = iris_df$petal_width/sd(iris_df$petal_width)
 cov_matrix = cov(iris_df) 
 # compute eigen values and vectors
 iris_eigen = eigen(cov_matrix)
-# iris_eigen is a list, first element in the list are eigen values, second element in the list are eigen vectors
+# iris_eigen is a list, first element in the list is set of eigen values, second element in the list is set of eigen vectors
 eigen_values = iris_eigen[1]
 eigen_vectors = iris_eigen[2]
 
 # I intend to transform iris dataset (which is 4D) into 2D space. I will choose the first two largest eigen values and construct the
-# transformation matrix out of it. The first two largest eigen values are from sepal_length & sepal_width, let's choose these corresponding eigen vectors as principal components and make matrix (4x2)
+# transformation matrix out of it. let's choose eigen vectors corresponding to first two largest 
+# eigen values and these are our as principal components. Project the IRIS dataframe onto these eigen vectors
+# and make a matrix of shape (4x2)
 eigen_vectors = do.call(rbind, eigen_vectors)	# eigen_vectors now in matrix form
-W = eigen_vectors[,1:2] 	# W is transformation matrix formed by first two columns (eigen_vectors)
-class(iris_df)			# iris dataset is in data frame format
-iris_matrix = data.matrix(iris_df)	# converting it to matrix form
-result = iris_matrix %*% W		# after transformation
+W = eigen_vectors[,1:2] 	                    # W is transformation matrix formed by first two columns (eigen_vectors)
+class(iris_df)			                          # iris dataset is in data frame format
+iris_matrix = data.matrix(iris_df)	          # converting it to matrix form
+result = iris_matrix %*% W		                # after transformation
 
 # let's label the flower names again
-result = data.frame(result)		# converting from matrix format to data frame format
-result$flower = 0			# added new column 'flower' to result data frame
-result$flower = iris$flower		# mapping flower names of original dataset to result data frame
+result = data.frame(result)		                # converting from matrix format to data frame format
+result$flower = 0			                        # added new column 'flower' to result data frame
+result$flower = iris$flower		                # mapping flower names of original dataset to result data frame
 colnames(result)[1] = "principal_component_1"	# rename column-1 is result data frame to 'principal_component_1'
 colnames(result)[2] = "principal_component_2"	# rename column-2 is result data frame to 'principal_component_2'
 
